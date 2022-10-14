@@ -21,7 +21,7 @@ class CreateCategoriesTable extends Migration
 
             $table->string('type');
             
-            $table->boolean('is active');
+            $table->boolean('is_active');
             
         });
     }

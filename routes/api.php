@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CreateController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,12 +21,30 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::post('auth/login', [AuthController::class, 'login']);
+
 Route::group(['middleware'=>'api', 'prefix'=>'auth'], function($router){
 
     Route::post('/register', [AuthController::class, 'register']);
 
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::get('/result', [AuthController::class, 'result']);
+
+});
+
+Route::group(['middleware'=>'api', 'prefix'=>'create'], function($router){
+
+    Route::post('/location', [CreateController::class, 'location']);
+
+    Route::post('/category', [CreateController::class, 'category']);
+
+    Route::post('/subcategory', [CreateController::class, 'subcategory']);
+
+    Route::post('/item', [CreateController::class, 'item']);
+
+    Route::post('/file', [CreateController::class, 'file']);
+
+    Route::post('/product', [CreateController::class, 'product']);
 
 });

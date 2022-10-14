@@ -17,7 +17,11 @@ class CreateLocationsTable extends Migration
 
             $table->increments('id');
 
-            $table->string('code');
+            $table->string('code')->nullable();            
+
+            $table->timestamps();
+
+            $table->softDeletes();
 
             $table->string('country');
 
@@ -43,11 +47,6 @@ class CreateLocationsTable extends Migration
             $table->integer('added_by')->unsigned();
 
             $table->foreign('added_by')->references('id')->on('users');
-            
-
-            $table->timestamps();
-
-            $table->softDeletes();
 
         });
     }

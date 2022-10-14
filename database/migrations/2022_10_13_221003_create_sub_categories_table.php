@@ -25,7 +25,7 @@ class CreateSubCategoriesTable extends Migration
             $table->foreign('parent_id')->references('id')->on('categories');
 
             
-            $table->boolean('is active');
+            $table->boolean('is_active');
 
         });
     }

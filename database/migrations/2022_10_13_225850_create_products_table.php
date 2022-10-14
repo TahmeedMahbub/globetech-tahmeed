@@ -47,8 +47,6 @@ class CreateProductsTable extends Migration
             $table->integer('min_quantity')->unsigned();
 
             $table->date('validity');
-
-            $table->timestamps();
         });
     }
 

@@ -72,8 +72,23 @@ class AuthController extends Controller
     }
 
 
+    public function logout()
+    {
+        auth()->logout();
+
+        return response()->json([
+            'message'=>'Logged out!'
+        ]);
+    }
+
+
     public function result()
     {
+        if(!auth()->user())
+        {
+            return response()->json(['error' => 'Unauthorized!'], 401);            
+        }
+        
         return response()->json(auth()->user());
     }
 }

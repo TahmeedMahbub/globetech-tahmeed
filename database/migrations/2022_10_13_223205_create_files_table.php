@@ -23,14 +23,10 @@ class CreateFilesTable extends Migration
             $table->foreign('item_id')->references('id')->on('items');
 
 
-            $table->integer('file_details_id')->unsigned();
-
-            $table->foreign('file_details_id')->references('id')->on('file_details');
-
+            $table->text('file');
+                        
+            $table->string('is_primary');
             
-            $table->boolean('is_primary');
-
-            $table->timestamps();
         });
     }
 
