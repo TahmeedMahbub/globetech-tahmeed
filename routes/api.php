@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CreateController;
+use App\Http\Controllers\ResultController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,8 +30,6 @@ Route::group(['middleware'=>'api', 'prefix'=>'auth'], function($router){
 
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    Route::get('/result', [AuthController::class, 'result']);
-
 });
 
 Route::group(['middleware'=>'api', 'prefix'=>'create'], function($router){
@@ -48,3 +47,6 @@ Route::group(['middleware'=>'api', 'prefix'=>'create'], function($router){
     Route::post('/product', [CreateController::class, 'product']);
 
 });
+
+
+Route::get('/results', [ResultController::class, 'results']);

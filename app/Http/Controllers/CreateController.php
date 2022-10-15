@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use DB;
+use App\Models\User;
 use App\Models\Location;
 use App\Models\Category;
 use App\Models\SubCategory;
@@ -16,7 +17,12 @@ use App\Models\Product;
 class CreateController extends Controller
 {
     public function location(Request $request)
-    {
+    {   
+        if(!auth()->user())
+        {
+            return response()->json(['error' => 'Unauthorized!'], 401);            
+        }
+        
         $request->validate([
             'country' => 'required | string',
             'address_1' =>  'required | string',
@@ -30,6 +36,11 @@ class CreateController extends Controller
             'type' =>  'required | string',
             'added_by' =>  'required | numeric',
         ]);
+
+        if(!User::find($request->added_by))
+        {
+            return response()->json(['error' => 'No user found as added_by!'], 404);            
+        }
 
         DB::beginTransaction();
         try {
@@ -70,7 +81,12 @@ class CreateController extends Controller
 
     
     public function category(Request $request)
-    {        
+    {   
+        if(!auth()->user())
+        {
+            return response()->json(['error' => 'Unauthorized!'], 401);            
+        }
+
         $request->validate([            
             'name' => 'required | string',
             'type' => 'required | string',
@@ -106,12 +122,22 @@ class CreateController extends Controller
 
     
     public function subcategory(Request $request)
-    {        
+    {         
+        if(!auth()->user())
+        {
+            return response()->json(['error' => 'Unauthorized!'], 401);            
+        }
+          
         $request->validate([            
             'name' => 'required | string',
             'parent_id' => 'required | numeric',
             'is_active' => 'required | boolean',
         ]);
+
+        if(!Category::find($request->parent_id))
+        {
+            return response()->json(['error' => 'No category found like parent_id!'], 404);            
+        }
 
         DB::beginTransaction();
         try {
@@ -142,7 +168,12 @@ class CreateController extends Controller
 
     
     public function item(Request $request)
-    {        
+    {         
+        if(!auth()->user())
+        {
+            return response()->json(['error' => 'Unauthorized!'], 401);            
+        }
+          
         $request->validate([            
             'item_type' => 'required | string',
             'location_id' => 'required | numeric',            
@@ -151,6 +182,16 @@ class CreateController extends Controller
             'status' => 'required | string',           
             'is_active' => 'required | boolean',   
         ]);
+
+        if(!Location::find($request->location_id))
+        {
+            return response()->json(['error' => 'No location found as location_id!'], 404);            
+        }
+
+        if(!User::find($request->user_id))
+        {
+            return response()->json(['error' => 'No user found in user_id!'], 404);            
+        }
 
              
             
@@ -186,22 +227,23 @@ class CreateController extends Controller
 
     
     public function file(Request $request)
-    {      
+    {         
+        if(!auth()->user())
+        {
+            return response()->json(['error' => 'Unauthorized!'], 401);            
+        }
+        
         $request->validate([            
             'item_id' => 'required | numeric',
             'file' => 'required | mimes:jpg,jpeg,png,bmp | max:51200',            
-            'details' => 'nullable | string',
+            'description' => 'nullable | string',
             'is_primary' => 'required | string', 
         ]);  
 
-        $file_details = [];
-        $file_details['name'] = $request->file->getClientOriginalName();
-        $file_details['file'] = $request->getHttpHost().'/'.$request->file->getClientOriginalName();
-        $file_details['extension'] = $request->file->extension();
-        $file_details['size'] = $request->file->getSize();
-        $file_details['details'] = $request->details;
-
-        $request->file->move(public_path('abc'), $file_details['name']);
+        if(!Item::find($request->item_id))
+        {
+            return response()->json(['error' => 'No items found in item_id!'], 404);            
+        }
              
             
         DB::beginTransaction();
@@ -210,9 +252,24 @@ class CreateController extends Controller
             $file = new File();
 
             $file->item_id = $request->item_id;
-            $file->file = json_encode($file_details, true);
             $file->is_primary = $request->is_primary;
 
+            $file->save();
+
+
+
+            $file_details = [];
+            $file_details['id'] = $file->id;
+            $file_details['name'] = $request->file->getClientOriginalName();
+            $file_details['file'] = $request->getHttpHost().'/'.$request->file->getClientOriginalName();
+            $file_details['extension'] = $request->file->extension();
+            $file_details['size'] = $request->file->getSize();
+            $file_details['description'] = $request->description;
+    
+            $request->file->move(public_path('/'), $file_details['name']);
+
+            
+            $file->file = json_encode($file_details, true);
             $file->save();
 
             DB::commit();
@@ -233,7 +290,12 @@ class CreateController extends Controller
 
     
     public function product(Request $request)
-    {      
+    {         
+        if(!auth()->user())
+        {
+            return response()->json(['error' => 'Unauthorized!'], 401);            
+        }
+        
         $request->validate([            
             'item_id' => 'required | numeric',
             'title' => 'required | string',
@@ -246,6 +308,21 @@ class CreateController extends Controller
             'min_quantity' => 'required | numeric',
             'validity' => 'required | date',
         ]);
+
+        if(!Item::find($request->item_id))
+        {
+            return response()->json(['error' => 'No items found in item_id!'], 404);            
+        }
+
+        if(!Category::find($request->category_id))
+        {
+            return response()->json(['error' => 'No categories found in category_id!'], 404);            
+        }
+
+        if(!SubCategory::find($request->sub_category_id))
+        {
+            return response()->json(['error' => 'No sub-categories found in sub_category_id!'], 404);            
+        }
              
             
         DB::beginTransaction();

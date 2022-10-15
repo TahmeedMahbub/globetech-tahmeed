@@ -64,16 +64,22 @@ class AuthController extends Controller
     public function createNewToken($token)
     {
         return response()->json([
+            
+            'user'=>auth()->user(),
             'access_token'=>$token,
             'token_type'=>'bearer',
-            'expires_in'=>auth()->factory()->getTTL()*10,
-            'user'=>auth()->user()
+            'expires_in'=>auth()->factory()->getTTL()*720
         ]);
     }
 
 
     public function logout()
-    {
+    {   
+        if(!auth()->user())
+        {
+            return response()->json(['error' => 'Unauthorized!'], 401);            
+        }
+        
         auth()->logout();
 
         return response()->json([
@@ -81,14 +87,4 @@ class AuthController extends Controller
         ]);
     }
 
-
-    public function result()
-    {
-        if(!auth()->user())
-        {
-            return response()->json(['error' => 'Unauthorized!'], 401);            
-        }
-        
-        return response()->json(auth()->user());
-    }
 }

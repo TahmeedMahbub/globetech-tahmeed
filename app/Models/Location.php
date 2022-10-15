@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Location extends Model
 {
     use HasFactory;
+
+    public function getItem()
+    {
+        return $this->belongsTo('App\Models\Item');
+    }
 }

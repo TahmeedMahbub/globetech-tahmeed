@@ -23,7 +23,7 @@ class CreateFilesTable extends Migration
             $table->foreign('item_id')->references('id')->on('items');
 
 
-            $table->text('file');
+            $table->text('file')->nullable();
                         
             $table->string('is_primary');
             
