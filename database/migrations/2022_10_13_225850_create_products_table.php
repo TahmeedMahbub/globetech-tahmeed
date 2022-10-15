@@ -23,30 +23,30 @@ class CreateProductsTable extends Migration
             $table->foreign('item_id')->references('id')->on('items');
 
 
-            $table->string('title');
+            $table->string('title')->nullable();
 
 
-            $table->integer('category_id')->unsigned();
+            $table->integer('category_id')->unsigned()->nullable();
 
             $table->foreign('category_id')->references('id')->on('categories');
 
 
-            $table->integer('sub_category_id')->unsigned();
+            $table->integer('sub_category_id')->unsigned()->nullable();
 
             $table->foreign('sub_category_id')->references('id')->on('sub_categories');
 
             
-            $table->boolean('negotiable');
+            $table->boolean('negotiable')->nullable();
 
-            $table->decimal('price', 10, 2);
+            $table->decimal('price', 10, 2)->nullable();
 
-            $table->string('condition', 20);
+            $table->string('condition', 20)->nullable();
 
             $table->text('description')->nullable();
             
-            $table->integer('min_quantity')->unsigned();
+            $table->integer('min_quantity')->unsigned()->nullable();
 
-            $table->date('validity');
+            $table->date('validity')->nullable();
         });
     }
 

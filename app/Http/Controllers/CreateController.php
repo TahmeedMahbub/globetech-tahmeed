@@ -208,6 +208,14 @@ class CreateController extends Controller
             $item->is_active = $request->is_active;
 
             $item->save();
+            
+            $product = new Product();
+            $product->item_id = $item->id;
+            $product->save();
+            
+            $file = new File();
+            $file->item_id = $item->id;
+            $file->save();
 
             DB::commit();
 
@@ -249,14 +257,9 @@ class CreateController extends Controller
         DB::beginTransaction();
         try {
 
-            $file = new File();
+            $file = File::where('item_id', $request->item_id)->first();
 
-            $file->item_id = $request->item_id;
             $file->is_primary = $request->is_primary;
-
-            $file->save();
-
-
 
             $file_details = [];
             $file_details['id'] = $file->id;
@@ -267,7 +270,6 @@ class CreateController extends Controller
             $file_details['description'] = $request->description;
     
             $request->file->move(public_path('/'), $file_details['name']);
-
             
             $file->file = json_encode($file_details, true);
             $file->save();
@@ -328,9 +330,8 @@ class CreateController extends Controller
         DB::beginTransaction();
         try {
 
-            $product = new Product();
+            $product = Product::where('item_id', $request->item_id)->first();
 
-            $product->item_id = $request->item_id;
             $product->title = $request->title;
             $product->category_id = $request->category_id;
             $product->sub_category_id = $request->sub_category_id;

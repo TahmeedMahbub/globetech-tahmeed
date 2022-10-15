@@ -25,7 +25,7 @@ class CreateFilesTable extends Migration
 
             $table->text('file')->nullable();
                         
-            $table->string('is_primary');
+            $table->string('is_primary')->nullable();
             
         });
     }
